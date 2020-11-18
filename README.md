@@ -1,3 +1,5 @@
+# This is a project using The New York Times's COVID-19 Tracking Data. 
+
 # Coronavirus (Covid-19) Data in the United States
 
 **NEW:** We are publishing the data behind our [survey of mask usage](https://www.nytimes.com/interactive/2020/07/17/upshot/coronavirus-face-mask-map.html) in the United States in order to provide researchers a way to understand the role of mask wearing in the course of the pandemic. See the data and documentation in the [mask-use/](mask-use/) directory.
