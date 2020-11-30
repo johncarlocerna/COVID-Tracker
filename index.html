@@ -13,84 +13,110 @@
     <link rel="stylesheet"
         href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
         type="text/css" />
-    <div id='map' style='position: absolute; top: 0; right: 0; bottom: 0; left: 0;'></div>
+    <div id='map' style='position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 85%;'></div>
+    <div id='sidebar' style='position: absolute; top: 0; right: 0; bottom: 0; left: 85%;'></div>
     <script>
+        var dict = {};
         mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmNhcmxvY2VybmEiLCJhIjoiY2tndHZ1ZTJ1MDdmZjJ0cWxjeWg1OHhodSJ9.isEZrIcngccYiPRpoIVSmQ';
-        var map = new mapboxgl.Map({
-            container: 'map',
-            zoom: 3.77,
-            center: [-94.522, 38.401],
-            style: 'mapbox://styles/johncarlocerna/ckgtvw7is38l719pg210wups9', // stylesheet location
-        });
+        if (!mapboxgl.supported()) {
+            alert('Your browser does not support Mapbox GL. Please use a different browser.')
+        }
+        else {
+            var map = new mapboxgl.Map({
+                container: 'map',
+                zoom: 1,
+                center: [-94.522, 38.401],
+                style: 'mapbox://styles/johncarlocerna/ckgtvw7is38l719pg210wups9', // stylesheet location
+            });
+        }
 
-        // map.on('load', function(e) {
-        //     var dict = {};
-        //     var sources = map.getStyle().layers;
-        //     var countyLayer = map.querySourceFeatures('composite', {
-        //         'sourceLayer': 'merged-c1d7lh'
-        //     });
-        //     var districtLayer = map.querySourceFeatures('composite', {
-        //         'sourceLayer': 'tl_2019_us_cd116-2yzvgj'
-        //     });
-        //     countyLayer.forEach(cfunc);
-        //     function cfunc(county, index) {
-        //         var name = county.properties;
-        //         dict[`${name.county}, ${name.state}`] = name;
-        //     }
-        //     districtLayer.forEach(dfunc);
-        //     function dfunc(district, index) {
-        //         console.log(district);
-        //         var name = district.properties;
-        //         dict[`${name.NAMELSAD}`] = name;
-        //     }
-        //     console.log(dict);
-        // });
+        window.addEventListener('load', function () {
+            map.on('load', function () {
+                var sources = map.getStyle().layers;
+                var countyLayer = map.querySourceFeatures('composite', {
+                    'sourceLayer': 'merged-c1d7lh'
+                });
+
+                countyLayer.forEach(cfunc);
+                function cfunc(county, index) {
+                    var entry = county.properties;
+                    dict[`${entry.county}, ${entry.state}`] = entry;
+                }
+                map.zoomTo(3.5, { center: [-94.522, 38.401] });
+                var districtLayer = map.querySourceFeatures('composite', {
+                    'sourceLayer': 'fixed-shapefile-b9ukwy'
+                });
+                districtLayer.forEach(dfunc);
+                function dfunc(district, index) {
+                    var entry = district.properties;
+                    dict[`${entry.NAMELSAD}`] = entry;
+                }
+                console.log("Entries in dictionary: " + Object.keys(dict).length);
+            })
+
+        });
 
 
         map.on('click', 'COVID County Map', function (e) {
-            //center map to clicked point
-            // map.flyTo({
-            //     center: e.features[0].geometry.coordinates
-            // });
-                console.log(e);
             var properties = e.features[0].properties;
             new mapboxgl.Popup({ closeButton: false })
                 .setLngLat(e.lngLat)
                 .setHTML(`${properties.county} <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases`) //regex to add commas to numbers
                 .addTo(map);
+            let entry = document.getElementById('sidebar');
+            entry.innerHTML += `${properties.county} County <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases <br /><br />`;
         });
 
-        // map.on('click', 'Congressional Boundaries', function (e) {
+        // map.on('click', 'Congressional Districts', function (e) {
         //     var properties = e.features[0].properties;
-        //     new mapboxgl.Popup()
+        //     new mapboxgl.Popup({ closeButton: false })
         //         .setLngLat(e.lngLat)
-        //         .setHTML(properties.NAMELSAD)
+        //         .setHTML(`${properties.STATE_NAME} ${properties.NAMELSAD}`)
         //         .addTo(map);
         // });
 
         //some geocoding map function for right now
 
         function forwardGeocoder(query) {
-           
+            var matchingFeatures = [];
+            for (var key in dict) {
+                var feature = [];
+                // console.log(key);
+                // handle queries with different capitalization than the source data by calling toLowerCase()
+                if (
+                    key
+                        .toLowerCase()
+                        .search(query.toLowerCase()) !== -1
+                ) {
+                    if (key) {
+                        feature['place_name'] = '🔥 ' + key;
+                        feature['center'] = [dict[key].Longitude, dict[key].Latitude];
+                        feature['text'] = dict[key].county + "County";
+                        matchingFeatures.push(feature);
+                    }
+                }
+            }
+            return matchingFeatures;
         }
 
         map.addControl(
             new MapboxGeocoder({
                 accessToken: mapboxgl.accessToken,
+                countries: 'us',
                 localGeocoder: forwardGeocoder,
-                zoom: 14,
-                placeholder: 'Enter search',
+                zoom: 7,
+                placeholder: 'Search by county or district:',
                 mapboxgl: mapboxgl
             })
         );
 
         // // Change the cursor to a pointer when the mouse is over the places layer.
-        map.on('mouseenter', 'Congressional Boundaries', function () {
+        map.on('mouseenter', 'Congressional Districts', function () {
             map.getCanvas().style.cursor = 'pointer';
         });
 
         // Change it back to a pointer when it leaves.
-        map.on('mouseleave', 'Congressional Boundaries', function () {
+        map.on('mouseleave', 'Congressional Districts', function () {
             map.getCanvas().style.cursor = '';
         });
 
