@@ -91,7 +91,7 @@
                         .toLowerCase().trim()
                         .search(query.toLowerCase().trim()) !== -1
                     ||
-                    `${dict[key][13]}-${dict[key][1]}`
+                    `${dict[key][13]}-${dict[key][1]}` //can also search like e.g. NY-14
                         .toLowerCase().trim()
                         .search(query.toLowerCase().trim()) !== -1
                 ) {
@@ -117,6 +117,7 @@
                 accessToken: mapboxgl.accessToken,
                 countries: 'us',
                 localGeocoder: forwardGeocoder,
+                localGeocoderOnly: true,
                 zoom: 8,
                 placeholder: 'Search by county or district:',
                 mapboxgl: mapboxgl
