@@ -8,6 +8,7 @@
 </head>
 
 <body>
+    <script type="text/javascript" language="javascript" src="dictionary.js"></script>
     <script
         src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
     <link rel="stylesheet"
@@ -24,35 +25,37 @@
         else {
             var map = new mapboxgl.Map({
                 container: 'map',
-                zoom: 1,
+                zoom: 4,
                 center: [-94.522, 38.401],
                 style: 'mapbox://styles/johncarlocerna/ckgtvw7is38l719pg210wups9', // stylesheet location
             });
         }
 
         window.addEventListener('load', function () {
-            map.on('load', function () {
-                var sources = map.getStyle().layers;
-                var countyLayer = map.querySourceFeatures('composite', {
-                    'sourceLayer': 'merged-c1d7lh'
-                });
+            // map.on('load', function () {
+            //     const fs = require('fs');
+            //     var sources = map.getStyle().layers;
+            //     var countyLayer = map.querySourceFeatures('composite', {
+            //         'sourceLayer': 'merged-c1d7lh'
+            //     });
 
-                countyLayer.forEach(cfunc);
-                function cfunc(county, index) {
-                    var entry = county.properties;
-                    dict[`${entry.county}, ${entry.state}`] = entry;
-                }
-                map.zoomTo(3.5, { center: [-94.522, 38.401] });
-                var districtLayer = map.querySourceFeatures('composite', {
-                    'sourceLayer': 'fixed-shapefile-b9ukwy'
-                });
-                districtLayer.forEach(dfunc);
-                function dfunc(district, index) {
-                    var entry = district.properties;
-                    dict[`${entry.NAMELSAD}`] = entry;
-                }
-                console.log("Entries in dictionary: " + Object.keys(dict).length);
-            })
+            //     countyLayer.forEach(cfunc);
+            //     function cfunc(county, index) {
+            //         var entry = county.properties;
+            //         dict[`${entry.county}, ${entry.state}`] = entry;
+            //     }
+            //     map.zoomTo(3.5, { center: [-94.522, 38.401] });
+            //     var districtLayer = map.querySourceFeatures('composite', {
+            //         'sourceLayer': 'fixed-shapefile-b9ukwy'
+            //     });
+            //     districtLayer.forEach(dfunc);
+            //     function dfunc(district, index) {
+            //         var entry = district.properties;
+            //         dict[`${entry.NAMELSAD}`] = entry;
+            //     }
+            //     console.log("Entries in dictionary: " + Object.keys(dict).length);
+            // })
+            dict = jsonAHIObject;
 
         });
 
@@ -85,13 +88,23 @@
                 // handle queries with different capitalization than the source data by calling toLowerCase()
                 if (
                     key
-                        .toLowerCase()
-                        .search(query.toLowerCase()) !== -1
+                        .toLowerCase().trim()
+                        .search(query.toLowerCase().trim()) !== -1
+                    ||
+                    `${dict[key][13]}-${dict[key][1]}`
+                        .toLowerCase().trim()
+                        .search(query.toLowerCase().trim()) !== -1
                 ) {
-                    if (key) {
-                        feature['place_name'] = '🔥 ' + key;
-                        feature['center'] = [dict[key].Longitude, dict[key].Latitude];
-                        feature['text'] = dict[key].county + "County";
+                    if(key.includes("Congressional District")){
+                        feature['place_name'] = `🔥 ${dict[key][13]}-${dict[key][1]}`; //State Abbreviation - District Number
+                        feature['center'] = [dict[key][11], dict[key][10]]; //Longitude, Latitude
+                        // feature['text'] = dict[key].county + "County";
+                        matchingFeatures.push(feature);
+                    }
+                    else if (key) {
+                        feature['place_name'] = `🔥 ${dict[key][1]} County, ${dict[key][2]}`; //County, State
+                        feature['center'] = [dict[key][11], dict[key][10]]; //Longitude, Latitude
+                        // feature['text'] = dict[key].county + "County";
                         matchingFeatures.push(feature);
                     }
                 }
@@ -104,7 +117,7 @@
                 accessToken: mapboxgl.accessToken,
                 countries: 'us',
                 localGeocoder: forwardGeocoder,
-                zoom: 7,
+                zoom: 8,
                 placeholder: 'Search by county or district:',
                 mapboxgl: mapboxgl
             })

@@ -1,4 +1,4 @@
-{
+var jsonAHIObject = {
     "county, state": [
         "date",
         "county",
@@ -53022,4 +53022,4 @@
         "NY",
         "New York"
     ]
-}
+};
