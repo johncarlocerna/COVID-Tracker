@@ -2,20 +2,25 @@
 
 <head>/>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>Covid Tracker</title>
     <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
+    
 </head>
 
 <body>
     <script type="text/javascript" language="javascript" src="dictionary.js"></script>
+    <link rel="stylesheet" href="styles.css">
     <script
         src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
     <link rel="stylesheet"
         href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
         type="text/css" />
-    <div id='map' style='position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 85%;'></div>
-    <div id='sidebar' style='position: absolute; top: 0; right: 0; bottom: 0; left: 85%; padding-top: 10px; padding-left: 10px;'></div>
+    <div id='map'></div>
+    <div id='sidebar'></div>
     <script>
         var dict = {};
         mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmNhcmxvY2VybmEiLCJhIjoiY2tndHZ1ZTJ1MDdmZjJ0cWxjeWg1OHhodSJ9.isEZrIcngccYiPRpoIVSmQ';
@@ -55,7 +60,7 @@
             //     }
             //     console.log("Entries in dictionary: " + Object.keys(dict).length);
             // })
-            dict = jsonAHIObject;
+            dict = jsonAHIObject; //loads dictionary with the county and district data
 
         });
 
@@ -95,7 +100,7 @@
                         .toLowerCase().trim()
                         .search(query.toLowerCase().trim()) !== -1
                 ) {
-                    if(key.includes("Congressional District")){
+                    if (key.includes("Congressional District")) {
                         feature['place_name'] = `🔥 ${dict[key][13]}-${dict[key][1]}`; //State Abbreviation - District Number
                         feature['center'] = [dict[key][11], dict[key][10]]; //Longitude, Latitude
                         // feature['text'] = dict[key].county + "County";
@@ -137,6 +142,15 @@
         map.dragRotate.disable();
         map.touchZoomRotate.disableRotation();
     </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
