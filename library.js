@@ -24,7 +24,7 @@ function loadDictionary() {
                 complete: function (results) {
                     console.log("2: " +count);
                     const jsonString = JSON.stringify(dict);
-                    fs.writeFile('./dictionary.json', jsonString, err => {
+                    fs.writeFile('./dictionary.js', jsonString, err => {
                         if (err) {
                             console.log('Error writing file', err)
                         } else {

@@ -21,6 +21,7 @@
         type="text/css" />
     <div id='map'></div>
     <div id='sidebar'></div>
+    <div id='update-bar'></div>
     <script>
         var dict = {};
         mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmNhcmxvY2VybmEiLCJhIjoiY2tndHZ1ZTJ1MDdmZjJ0cWxjeWg1OHhodSJ9.isEZrIcngccYiPRpoIVSmQ';
@@ -71,8 +72,25 @@
                 .setLngLat(e.lngLat)
                 .setHTML(`${properties.county} <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases`) //regex to add commas to numbers
                 .addTo(map);
+
             let entry = document.getElementById('sidebar');
-            entry.innerHTML += `${properties.county} County <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases <br /><br />`;
+            let card = document.createElement('div');
+            card.className = 'card text-white bg-dark mb-3 text-center';
+            let cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
+            let title = document.createElement('h5');
+            title.innerText = `${properties.county} County`;
+            title.className = 'card-title';
+            let text = document.createElement('p');
+            text.innerText = `${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases`;
+            text.className = 'card-text'
+            cardBody.appendChild(title);
+            cardBody.appendChild(text);
+            card.appendChild(cardBody);
+            $(entry).prepend(card); //jQuery prepend
+            
+
+            // entry.innerHTML += `${properties.county} County <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases <br /><br />`;
         });
 
         // map.on('click', 'Congressional Districts', function (e) {

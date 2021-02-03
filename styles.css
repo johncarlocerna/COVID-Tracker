@@ -12,6 +12,17 @@
     right: 0; 
     bottom: 0; 
     left: 85%; 
-    padding-top: 10px; 
+    padding: 5px;
+    background-color: #f7f7f9;
+}
+#update-bar{
+    position: absolute;
+    top: 0
+
+}
+.card-body{
+    padding-top: 5px;
+    padding-bottom: 5px;
     padding-left: 10px;
+    padding-right: 10px;
 }
