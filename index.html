@@ -93,16 +93,6 @@
             // entry.innerHTML += `${properties.county} County <br /> ${properties.cases.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} cases <br /><br />`;
         });
 
-        // map.on('click', 'Congressional Districts', function (e) {
-        //     var properties = e.features[0].properties;
-        //     new mapboxgl.Popup({ closeButton: false })
-        //         .setLngLat(e.lngLat)
-        //         .setHTML(`${properties.STATE_NAME} ${properties.NAMELSAD}`)
-        //         .addTo(map);
-        // });
-
-        //some geocoding map function for right now
-
         function forwardGeocoder(query) {
             var matchingFeatures = [];
             for (var key in dict) {
