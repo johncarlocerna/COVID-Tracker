@@ -4,5 +4,4 @@ df1 = pd.read_csv('./live/us-counties.csv') #daily county data
 df2 = pd.read_csv('./live/fipslatlong.csv') #FIPS, Latitude, and Longitude information
 #merges both csvs using NYT data fips keys only
 df_final = pd.merge(df1, df2, how='left', left_on='fips', right_on='fips')
-df_final.drop(df_final.columns[0], axis = 1) #drops first column of unnecessary information
-df_final.to_csv('./live/merged.csv')
+df_final.to_csv('./live/merged.csv', index=False)
